@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wangzhen.dao.MaintainDao">
+
+    <insert id="add" parameterType="permission">
+        insert into t_permission (name,keyword,description) values (#{name},#{keyword},#{description})
+    </insert>
+    <update id="edit" parameterType="permission">
+        update t_permission
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="keyword!=null">
+                keyword=#{keyword},
+            </if>
+            <if test="description!=null">
+                description=#{description}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <delete id="delect" parameterType="int">
+        delete from t_permission where  id=#{id}
+    </delete>
+
+    <select id="selectByCondition" resultType="cn.wangzhen.domain.Permission" parameterType="string">
+        select * from t_permission
+        <if test="value != null and value.length > 0">
+            where name=#{value} or keyword=#{value}
+        </if>
+    </select>
+    <select id="findById" resultType="cn.wangzhen.domain.Permission" parameterType="int">
+        select * from t_permission  where id=#{id}
+    </select>
+</mapper>

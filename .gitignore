@@ -1,0 +1,10 @@
+.idea
+*.iml
+out
+gen
+/health_service_provider/target/
+/health_backend/target/
+/health_common/target/
+/health_interface/target/
+/health_jobs/target/
+/helalth_mobile/target/

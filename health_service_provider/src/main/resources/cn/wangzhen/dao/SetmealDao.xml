@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wangzhen.dao.SetmealDao">
+    <resultMap id="baseResultMap" type="setmeal">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="price" property="price"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <result column="img" property="img"/>
+    </resultMap>
+    <resultMap id="findByIdResultMap" type="setmeal" extends="baseResultMap">
+        <collection property="checkGroups" ofType="checkGroups" column="id" select="cn.wangzhen.dao.CheckGroupDao.findCheckGroupById"></collection>
+    </resultMap>
+
+
+    <insert id="add" parameterType="setmeal">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_setmeal(code,name,sex,age,helpCode,price,remark,attention,img) values
+        (#{code},#{name},#{sex},#{age},#{helpCode},#{price},#{remark},#{attention},#{img})
+    </insert>
+    <update id="setSetmealAndCheckGroup" parameterType="map">
+  insert into t_setmeal_checkgroup(setmeal_id,checkgroup_id) values(#{setmealId},#{checkgroupId})
+</update>
+    <update id="edit" parameterType="setmeal">
+        update t_setmeal
+        <set>
+            <if test="name !=null">
+                name=#{name},
+            </if>
+            <if test="code !=null">
+                code=#{code},
+            </if>
+            <if test="helpCode !=null">
+                helpCode=#{helpCode},
+            </if>
+            <if test="sex !=null">
+                sex=#{sex},
+            </if>
+            <if test="age !=null">
+                age=#{age},
+            </if>
+            <if test="price !=null">
+                price=#{price},
+            </if>
+            <if test="remark !=null">
+                remark=#{remark},
+            </if>
+            <if test="attention !=null">
+                attention=#{attention},
+            </if>
+            <if test="img!=null">
+                img=#{img}
+            </if>
+            where id=#{id}
+        </set>
+    </update>
+    
+    <delete id="delect" parameterType="int">
+        delete from t_setmeal where id=#{id}
+    </delete>
+    
+    <delete id="del" parameterType="int">
+        /*删除关系表*/
+        delete from t_setmeal_checkgroup where setmeal_id=#{id}
+    </delete>
+    
+    <select id="findPage" resultType="setmeal" parameterType="string">
+        select * from t_setmeal
+        <if test="value!=null and value>0">
+            where code=#{value} or name=#{value} or helpCode=#{value}
+        </if>
+    </select>
+    
+    <select id="findCkeckgroupIdsBySetmealId" parameterType="int" resultType="int">
+        select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id}
+    </select>
+    
+    <select id="findAll" resultType="setmeal">
+        select * from t_setmeal
+    </select>
+
+    <select id="findById" resultMap="findByIdResultMap" parameterType="integer">
+        select * from t_setmeal where id=#{id}
+    </select>
+    <select id="findSetmealCount" resultType="java.util.Map">
+        SELECT COUNT(o.`id`) `value`,s.`name` FROM t_order o, t_setmeal s WHERE o.`setmeal_id`=s.`id` GROUP BY s.`name`
+    </select>
+</mapper>
